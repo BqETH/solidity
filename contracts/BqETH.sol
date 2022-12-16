@@ -1,6 +1,7 @@
 pragma solidity >=0.8.0 <0.9.0;
 //SPDX-License-Identifier: MIT
 
+import "./BigNumbers.sol";
 import "hardhat/console.sol";
 uint64 constant Y3K = 32503680000000;
 import './PietrzakVerifier.sol';
@@ -33,8 +34,8 @@ contract BqETH is PietrzakVerifier {
   struct Puzzle {
     address creator;    // The user who registered the puzzle
     address payable farmer;     // Last farmer to claim
-    uint256 N;          // The modulus
-    uint256 x;          // The start value
+    bytes N;            // The modulus
+    bytes x;            // The start value
     uint256 t;          // The time parameter
     uint256 sdate;      // The start date or next pid in chain
     bytes32 h3;         // H3 Hash value of the solution
@@ -55,7 +56,7 @@ contract BqETH is PietrzakVerifier {
 
   // In the white paper we suggest using y0=2^(x0^t) mod N and y1=2^(x1^t) mod N 
   // by generating a random x0, x1, then publishing x0 and x1'=enc(x1) with
-  // x1' being x1 encrypted with y0.  It is actuall easier and just as secure,
+  // x1' being x1 encrypted with y0.  It is actually easier and just as secure,
   // to generate a random x1' and deriving x1 from it as x1=y0^x1' mod N . 
   // We can then simply publish a new Puzzle with the same data but x1' 
   // instead of x1. The re-encryption policy can be linked to the last puzzle.
@@ -69,14 +70,14 @@ contract BqETH is PietrzakVerifier {
   event NewPuzzleRegistered(address sender, uint256 pid, bool ready);
   event PuzzleInactive(
     uint256 pid,  
-    uint256 solution, 
+    bytes solution, 
     string verifyingKey, 
     string messageKit,  
     uint256 sdate, 
     string treasureMap, 
     string policyEncryptingKey
     );
-  event RewardClaimed(uint256 pid, uint256 y, uint256 sdate, uint256 reward);
+  event RewardClaimed(uint256 pid, bytes y, uint256 sdate, uint256 reward);
   event NewPolicyRegistered(    
     string id,
     string label,
@@ -102,13 +103,13 @@ contract BqETH is PietrzakVerifier {
   }
 
   // Some unique key for each puzzle
-  function puzzleKey(uint256 _N, uint256 _x, uint256 _t) public pure returns (uint256) 
+  function puzzleKey(bytes memory _N, bytes memory _x, uint256 _t) public pure returns (uint256) 
   {
     return uint(keccak256(abi.encodePacked(_N, _x, _t)));
   }
 
 struct ChainData {
-    uint256 x;          // The start value
+    bytes x;        // The start value
     uint256 t;          // The time parameter
     uint256 pid;        // The next pid
     bytes32 h3;         // H3 Hash value of the solution
@@ -129,15 +130,15 @@ struct PolicyData {
   /// @notice Registers a user Puzzle Chain
   /// @dev This registration creates an entry per puzzle in the userPuzzles map. The parameters completely and uniquely define the puzzle
   /// and may be repeated across multiple puzzles since (N,φ) will be re-used until N has decayed. 
-  /// @param _N uint256  The prime composite modulus
+  /// @param _N bytes  The prime composite modulus
   /// @param _c[] ChainData  The puzzle initial challenges
-  /// @param _phi string  This is the value of phi, encrypted for the caller's public key
+  /// @param _phi string  This is the encrypted value of phi, encrypted for the caller's public key
   /// @param _sdate uint256  The start date (UTC) or the next puzzle hash in the chain
   /// @param _policy PolicyData  The details of the NuCypher policy covering this
   /// @param _messageKit string The encrypted payload
   /// @return ph uint256 Returns the puzzle hash key of the first puzzle
   function registerPuzzleChain(
-    uint256 _N, 
+    bytes memory _N, 
     ChainData[] memory _c, 
     string memory _phi,
     uint256 _sdate,
@@ -213,14 +214,14 @@ struct PolicyData {
   /// @notice Registers a flipped user Puzzle
   /// @dev This registration creates an entry per puzzle in the userPuzzles map. The parameters completely and uniquely define the puzzle
   /// and may be repeated across multiple puzzles since (N,φ) will be re-used until N has decayed. 
-  /// @param _N uint256  The prime composite modulus
+  /// @param _N bytes  The prime composite modulus
   /// @param _c[] ChainData  The puzzle initial challenges
   /// @param _phi string  This is the value of phi, encrypted for the caller's public key
   /// @param _sdate uint256  The start date (UTC) or the next puzzle hash in the chain
   /// @param _policy PolicyData  The details of the NuCypher policy covering this
   /// @return ph uint256 Returns the puzzle hash key
   function registerFlippedPuzzle(
-    uint256 _N, 
+    bytes memory _N, 
     ChainData[] memory _c, 
     string memory _phi, 
     uint256 _sdate, 
@@ -338,8 +339,8 @@ struct PolicyData {
   function getActivePuzzle(address _user) public view 
       returns (uint256 pid,       // The puzzle key
               address creator,    // The puzzle creator
-              uint256 N,           // The modulus
-              uint256 x,           // The start value
+              bytes memory N,           // The modulus
+              bytes memory x,           // The start value
               uint256 t,           // The time parameter
               bytes32 h3,          // H3 Hash value of the solution
               uint256 reward,      // The amount that should be dispensed
@@ -361,8 +362,8 @@ struct PolicyData {
       returns (
         uint256 pid,       // The puzzle key
         address creator,    // The puzzle creator
-        uint256 N,           // The modulus
-        uint256 x,           // The start value
+        bytes memory N,           // The modulus
+        bytes memory x,           // The start value
         uint256 t,           // The time parameter
         bytes32 h3,          // H3 Hash value of the solution
         uint256 reward,      // The amount that should be dispensed
@@ -412,7 +413,7 @@ struct PolicyData {
 
   // Reward claim: S1, Proof p 
   // Verifier: Check Proof is valid for S1, Check that H1=Hash(S1), X2=Hash(Salt+S1), and H3=Hash(X2+H1)
-  function claimReward(address payable _farmer, uint256 _pid, uint256 _y, uint256[] calldata _proof) public 
+  function claimReward(address payable _farmer, uint256 _pid, bytes memory _y, bytes[] calldata _proof) public 
   returns (uint256)
   {
     // Force execution of claimPuzzle and claimReward to happen in different blocks
@@ -420,7 +421,7 @@ struct PolicyData {
     claimBlockNumber = block.number;
     // Look up the puzzle
     Puzzle storage puzzle = userPuzzles[_pid];
-    if (puzzle.x != 0) {   // Valid and active puzzle
+    if (!BigNumbers.isZero(puzzle.x)) {   // Valid and active puzzle
       // Must be the same farmer that committed the solution first
       require(puzzle.farmer == _farmer, "Original farmer required");
       // The solution submitted must match the commitment
@@ -434,7 +435,7 @@ struct PolicyData {
       {
             puzzle.farmer.transfer(puzzle.reward);
             escrow_balances[puzzle.creator] -= puzzle.reward;
-            puzzle.x = 0;     // Set puzzle to inactive
+            puzzle.x = "";     // Set puzzle to inactive
             ActivePolicy memory policy = activePolicies[puzzle.creator];
             emit PuzzleInactive(_pid, // Puzzle Hash
                 _y,                         // The solution

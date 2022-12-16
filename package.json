@@ -48,6 +48,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
     "hardhat-tracer": "^1.1.0-rc.6",
+    "harhat": "^1.0.1",
     "web3": "^1.8.0"
   }
 }

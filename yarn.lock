@@ -5378,6 +5378,11 @@ hardhat@^2.12.4:
     uuid "^8.3.2"
     ws "^7.4.6"
 
+harhat@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/harhat/-/harhat-1.0.1.tgz#3c30a99e22910e34860b3f72c5637739eb7c378f"
+  integrity sha512-8uDw+Fw01m9Tt2y/9BupfMPh4bVHvimwG0Dt55qTNDVwRI731v5UDMAS7eHNV1PuuE6DTGVKdjlS26lBlX0XiQ==
+
 has-ansi@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/has-ansi/-/has-ansi-2.0.0.tgz#34f5049ce1ecdf2b0649af3ef24e45ed35416d91"
