@@ -53,6 +53,16 @@ abstract contract PietrzakVerifier {
   // This method verifies that proof p correctly asserts that xi^t mod N = yi 
   function verifyProof(uint256 N, uint256 xi,  uint256 d, uint256 yi, uint8 index, uint256[] memory p) internal returns (bool) 
   {
+      // Farmers use sha256 (Sha-2) and so do we
+      // And they use the proper big endian byte configuration of the integers
+      // s = (x.to_bytes(int_size, "big", signed=False) + y.to_bytes(int_size, "big", signed=False) + μ.to_bytes(int_size, "big", signed=False))
+      // b = hashlib.sha256(s).digest()
+      // return int.from_bytes(b[:16], "big")
+
+      // We must also check that input params are valid: x,y are square roots mod N and that the values match the puzzle's data
+      // assert (math.gcd(puzzle[PUZZLE_X] - 1, puzzle[PUZZLE_MODULUS]) == 1)
+      // assert (math.gcd(puzzle[PUZZLE_X] + 1, puzzle[PUZZLE_MODULUS]) == 1)
+
       uint256 ui = p[index];
       uint256 ri = r_value(xi, yi, ui) % N;
       xi = mulmod(expmod(xi, ri, N), ui, N);
