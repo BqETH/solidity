@@ -1,5 +1,5 @@
-pragma solidity >=0.8.0 <0.9.0;
 //SPDX-License-Identifier: MIT
+pragma solidity >=0.8.0 <0.9.0;
 
 import "./BigNumbers.sol";
 
@@ -49,6 +49,10 @@ abstract contract PietrzakVerifier {
     uint8 index, 
     bytes[] memory p) internal view returns (bool) 
   {
+      // We must also check that input params are valid: x,y are square roots mod N and that the values match the puzzle's data
+      // assert (math.gcd(puzzle[PUZZLE_X] - 1, puzzle[PUZZLE_MODULUS]) == 1)
+      // assert (math.gcd(puzzle[PUZZLE_X] + 1, puzzle[PUZZLE_MODULUS]) == 1)
+
     // Make Bignumbers out of everything
     BigNumber memory bnN = BigNumbers.init(N, false);
     BigNumber memory bnxi = BigNumbers.init(xi, false);
