@@ -21,7 +21,12 @@ abstract contract PietrzakVerifier {
   }
 
  function r_value(BigNumber memory _x, BigNumber memory _y, BigNumber memory _u) public pure returns (uint128) {
-      // Farmers use sha256
+      // Farmers use sha256 (Sha-2) and so do we
+      // And they use the proper big endian byte configuration of the integers
+      // s = (x.to_bytes(int_size, "big", signed=False) + y.to_bytes(int_size, "big", signed=False) + μ.to_bytes(int_size, "big", signed=False))
+      // b = hashlib.sha256(s).digest()
+      // return int.from_bytes(b[:16], "big")
+
       // We chop off the hash at 16 bytes because that's all we need for r
       bytes memory p = abi.encode(_x.val,_y.val, _u.val);
       bytes32 s = sha256(p);
@@ -42,7 +47,7 @@ abstract contract PietrzakVerifier {
     uint256 d, 
     bytes memory yi, 
     uint8 index, 
-    bytes[] memory p) internal returns (bool) 
+    bytes[] memory p) internal view returns (bool) 
   {
     // Make Bignumbers out of everything
     BigNumber memory bnN = BigNumbers.init(N, false);
@@ -64,7 +69,7 @@ abstract contract PietrzakVerifier {
     uint256 d, 
     BigNumber memory yi, 
     uint8 index, 
-    BigNumber[] memory p) internal returns (bool) 
+    BigNumber[] memory p) private view returns (bool) 
   {
       BigNumber memory ui = p[index];
       BigNumber memory ri = BigNumbers.mod(BigNumbers.init(r_value(xi, yi, ui), false), N);
