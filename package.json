@@ -42,11 +42,13 @@
   "scripts": {
     "lint": "",
     "lint:fix": "",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "cat ./artifacts/contracts/BqETH.sol/BqETH.json | grep -v 'deployedBytecode' | grep -v 'bytecode' > ../bqeth-dapp/src/artifacts/BqETH.json"
+    "deploy": "cat ./artifacts/contracts/BqETH.sol/BqETH.json | grep -v 'deployedBytecode' | grep -v 'bytecode' > ../bqeth-dapp/src/artifacts/BqETH.json",
+    "compile": "hardhat compile",
+    "test": "hardhat test"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
+    "@tovarishfin/hardhat-yul": "^3.0.5",
     "hardhat-tracer": "^1.1.0-rc.6",
     "web3": "^1.8.0"
   }
