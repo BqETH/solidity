@@ -13,9 +13,9 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
+        internalType: "bytes",
         name: "base",
-        type: "uint256",
+        type: "bytes",
       },
       {
         internalType: "uint256",
@@ -23,17 +23,17 @@ const _abi = [
         type: "uint256",
       },
       {
-        internalType: "uint256",
+        internalType: "bytes",
         name: "m",
-        type: "uint256",
+        type: "bytes",
       },
     ],
-    name: "expmod",
+    name: "bignum_expmod",
     outputs: [
       {
-        internalType: "uint256",
+        internalType: "bytes",
         name: "o",
-        type: "uint256",
+        type: "bytes",
       },
     ],
     stateMutability: "view",
@@ -61,27 +61,27 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
+        internalType: "bytes",
         name: "_x",
-        type: "uint256",
+        type: "bytes",
       },
       {
-        internalType: "uint256",
+        internalType: "bytes",
         name: "_y",
-        type: "uint256",
+        type: "bytes",
       },
       {
-        internalType: "uint256",
+        internalType: "bytes",
         name: "_u",
-        type: "uint256",
+        type: "bytes",
       },
     ],
     name: "r_value",
     outputs: [
       {
-        internalType: "uint128",
-        name: "",
-        type: "uint128",
+        internalType: "bytes16",
+        name: "result",
+        type: "bytes16",
       },
     ],
     stateMutability: "pure",
