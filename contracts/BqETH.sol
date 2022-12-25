@@ -412,7 +412,10 @@ struct PolicyData {
 
   // Reward claim: S1, Proof p 
   // Verifier: Check Proof is valid for S1, Check that H1=Hash(S1), X2=Hash(Salt+S1), and H3=Hash(X2+H1)
-  function claimReward(address payable _farmer, uint256 _pid, bytes memory _y, bytes[] calldata _proof) public returns (uint256)
+  struct ProofEntry {
+    bytes value;
+  }
+  function claimReward(address payable _farmer, uint256 _pid, bytes memory _y, ProofEntry[] calldata _proof) public returns (uint256)
   {
     // Force execution of claimPuzzle and claimReward to happen in different blocks
     require(claimBlockNumber < block.number);
@@ -430,7 +433,12 @@ struct PolicyData {
       // Now we can bother to verify
       uint256 d = log2(puzzle.t)-1;
       // assert isGroupElement(puzzle.x,puzzle.N);
-      if (verifyProof(puzzle.N, puzzle.x, d, _y, 0, _proof)) 
+      bytes[] memory p = new bytes[](_proof.length);
+      for (uint i = 0; i < _proof.length; i++) {
+        p[i] = _proof[i].value;
+      }
+
+      if (verifyProof(puzzle.N, puzzle.x, d, _y, 0, p)) 
       {
             puzzle.farmer.transfer(puzzle.reward);
             escrow_balances[puzzle.creator] -= puzzle.reward;
