@@ -412,10 +412,10 @@ struct PolicyData {
 
   // Reward claim: S1, Proof p 
   // Verifier: Check Proof is valid for S1, Check that H1=Hash(S1), X2=Hash(Salt+S1), and H3=Hash(X2+H1)
-  struct ProofEntry {
-    bytes value;
-  }
-  function claimReward(address payable _farmer, uint256 _pid, bytes memory _y, ProofEntry[] calldata _proof) public returns (uint256)
+  // struct ProofEntry {
+  //   bytes value;
+  // }
+  function claimReward(address payable _farmer, uint256 _pid, bytes memory _y, bytes[] calldata _proof) public returns (uint256)
   {
     // Force execution of claimPuzzle and claimReward to happen in different blocks
     require(claimBlockNumber < block.number);
@@ -426,19 +426,23 @@ struct PolicyData {
       // Must be the same farmer that committed the solution first
       require(puzzle.farmer == _farmer, "Original farmer required");
       // The solution submitted must match the commitment
-      bytes32 h1 = sha256(abi.encode(_y));
-      bytes32 x2 = sha256(abi.encode(salt,_y));
+      bytes32 h1 = sha256(_y);
+      bytes32 x2 = sha256(abi.encodePacked(salt,_y));
+      console.log("H1:");
+      console.logBytes(abi.encodePacked(h1));
+      console.log("X2:");
+      console.logBytes(abi.encodePacked(x2));
       require(sha256(abi.encode(x2,h1)) == puzzle.h3, "Solution must match commitment.");
 
       // Now we can bother to verify
       uint256 d = log2(puzzle.t)-1;
       // assert isGroupElement(puzzle.x,puzzle.N);
-      bytes[] memory p = new bytes[](_proof.length);
-      for (uint i = 0; i < _proof.length; i++) {
-        p[i] = _proof[i].value;
-      }
+      // bytes[] memory p = new bytes[](_proof.length);
+      // for (uint i = 0; i < _proof.length; i++) {
+      //   p[i] = _proof[i].value;
+      // }
 
-      if (verifyProof(puzzle.N, puzzle.x, d, _y, 0, p)) 
+      if (verifyProof(puzzle.N, puzzle.x, d, _y, 0, _proof)) 
       {
             puzzle.farmer.transfer(puzzle.reward);
             escrow_balances[puzzle.creator] -= puzzle.reward;
