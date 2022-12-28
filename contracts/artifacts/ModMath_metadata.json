@@ -1,0 +1,83 @@
+{
+	"compiler": {
+		"version": "0.8.6+commit.11564f7e"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "a",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "b",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "mod",
+						"type": "bytes"
+					}
+				],
+				"name": "big_mulmod",
+				"outputs": [
+					{
+						"internalType": "bytes",
+						"name": "c",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/ModMath.sol": "ModMath"
+		},
+		"evmVersion": "berlin",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/ModMath.sol": {
+			"keccak256": "0x750152461640003424deb13401ccc2fbc084cacf3ba9f4a26f4b3d77b48b4bd3",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://cbcb20688f2418b138284448e38076d8060a19ef11e811b6c815797d7d7e8837",
+				"dweb:/ipfs/QmbkqZEMHBdGPSzXsvcPJW2Pd5krPHD75Zr6PdWzE3Njp2"
+			]
+		},
+		"hardhat/console.sol": {
+			"keccak256": "0x60b0215121bf25612a6739fb2f1ec35f31ee82e4a8216c032c8243d904ab3aa9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6e29880d33dd479bb046ba306993d26ccb779a4b1d94a046cb3567f22948bb4d",
+				"dweb:/ipfs/QmfTY1qzPt5C63Wc7y6JqfZr5899NRvXYdCpyLzR5FXQic"
+			]
+		}
+	},
+	"version": 1
+}

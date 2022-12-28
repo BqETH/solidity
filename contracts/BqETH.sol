@@ -420,6 +420,11 @@ struct PolicyData {
     // Force execution of claimPuzzle and claimReward to happen in different blocks
     require(claimBlockNumber < block.number);
     claimBlockNumber = block.number;
+
+    console.log("Farmer:");
+    console.logBytes(abi.encodePacked(_farmer));
+    console.log("Pid:");
+    console.logBytes(abi.encodePacked(_pid));
     // Look up the puzzle
     Puzzle storage puzzle = userPuzzles[_pid];
     if (! big_equal(trim(puzzle.x), hex"")) {   // Valid and active puzzle
@@ -438,8 +443,19 @@ struct PolicyData {
       uint256 d = log2(puzzle.t)-1;
       // assert isGroupElement(puzzle.x,puzzle.N);
       // bytes[] memory p = new bytes[](_proof.length);
+      console.log("N:");
+      console.logBytes(abi.encodePacked(puzzle.N));
+      console.log("x:");
+      console.logBytes(abi.encodePacked(puzzle.x));
+      console.log("d:");
+      console.logBytes(abi.encodePacked(d));
+      console.log("_y:");
+      console.logBytes(abi.encodePacked(_y));
+
       // for (uint i = 0; i < _proof.length; i++) {
-      //   p[i] = _proof[i].value;
+      //   // p[i] = _proof[i].value;
+      //   console.log("\",\"");
+      //   console.logBytes(abi.encode(_proof[i]));
       // }
 
       if (verifyProof(puzzle.N, puzzle.x, d, _y, 0, _proof)) 
@@ -473,11 +489,28 @@ struct PolicyData {
               }
             }
       }
+      else {
+        console.log("Verification failed");
+        return 0;
+      }
       return _pid;
     }
     else {
       console.log("Puzzle already claimed");
       return 0;
+    }
+  }
+
+
+  function callVerify(bytes memory _N, bytes memory _x,  uint256 d, bytes memory _y, uint8 index, bytes[] memory _proof) 
+    public returns (uint256)
+  {
+    if (verifyProof(_N, _x, d, _y, index, _proof)) {
+    return 1;
+    }
+    else {
+        console.log("Verification failed");
+        return 0;
     }
   }
 

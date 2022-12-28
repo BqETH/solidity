@@ -3,18 +3,18 @@ pragma solidity >=0.8.0 <0.9.0;
   // Some functions copied from https://github.com/kilic/evmvdf 
   // Some functions copied from 0x: https://github.com/0xProject/VDF/blob/master/contracts/Verifier.sol
 import './ModMath.sol';
+import "hardhat/console.sol";
 
 abstract contract PietrzakVerifier is ModMath {
 
-  function r_value(bytes memory _x, bytes memory _y, bytes memory _u) public pure returns (bytes16 result)
+  function r_value(bytes memory _x, bytes memory _y, bytes memory _u) public view returns (bytes16 result)
   {
       // Farmers use sha256 (Sha-2) and so do we
       // And they use the proper big endian byte configuration of the integers
       // s = (x.to_bytes(int_size, "big", signed=False) + y.to_bytes(int_size, "big", signed=False) + μ.to_bytes(int_size, "big", signed=False))
       // b = hashlib.sha256(s).digest()
       // return int.from_bytes(b[:16], "big")
-      
-      bytes memory p = abi.encode(_x,_y, _u);
+      bytes memory p = abi.encodePacked(_x,_y, _u);
       bytes32 s = sha256(p);
       bytes16[2] memory b = [bytes16(0),0];
       assembly {
@@ -24,6 +24,14 @@ abstract contract PietrzakVerifier is ModMath {
       // We chop off the hash at 16 bytes because that's all we need for r
       // Note: Most Fiat Shamir transforms will use 1 bit for each interaction, but we're not doing 
       // 128 rounds so it makes sense to maintain the unpredictability by using 16 bits for each level. 
+// console.log("r_value call -> b: ");
+// console.logBytes(abi.encode(b[0]));
+// console.log(" from x: ");
+// console.logBytes(_x);
+// console.log(" y:");
+// console.logBytes(_y);
+// console.log(" u:");
+// console.logBytes(_u);
       return b[0]; // returns 16 bytes
   }
 
@@ -47,22 +55,23 @@ abstract contract PietrzakVerifier is ModMath {
   {
       bytes memory ui = p[index];
       bytes16 ri = r_value(xi, yi, ui);      // This will be 16 bytes
-      uint256 exp = uint256(bytes32(ri));
-      xi = ModMath.big_mulmod(ModMath.bignum_expmod(xi, exp, N), ui, N);
-      yi = ModMath.big_mulmod(ModMath.bignum_expmod(ui, exp, N), yi, N);
+      uint256 exp = uint256(uint128(ri));
+// console.logBytes(abi.encode(exp));
+      xi = ModMath.big_mulmod(ModMath.modexp2048(xi, exp, N), ui, N);
+      yi = ModMath.big_mulmod(ModMath.modexp2048(ui, exp, N), yi, N);
 
       // Recursion
-      if (index+1 != p.length)
+      if (index+1 != p.length && d > 0)
           return verifyProof(N, xi, d-1, yi, index+1, p);
 
       // When there are no more entries in the proof 
       uint256 e = 2**(2**d);            // Note: This is a problem, if d is >=8
-      if (ModMath.big_equal(yi,ModMath.bignum_expmod(xi, e, N))) {
-          // console.log("Proof is Valid");
+      if (ModMath.big_equal(yi,ModMath.modexp2048(xi, e, N))) {
+          console.log("Proof is Valid");
           return true;
       }
       else {
-          // console.log("Proof is invalid");
+          console.log("Proof is invalid");
           return false;
       }
   }

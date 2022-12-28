@@ -1,6 +1,7 @@
 import ethers from 'ethers';
 
-const provider = new ethers.providers.JsonRpcProvider('http://192.168.0.140:8545'); // Hardhat
+//const provider = new ethers.providers.JsonRpcProvider('http://192.168.0.140:8545'); // Hardhat
+const provider = new ethers.providers.JsonRpcProvider('http://localhost:8545'); // Hardhat
 
 // Given an address and a range of blocks, query the Ethereum blockchain for the ETH balance across the range
 async function getBalanceInRange(address, startBlock, endBlock) {

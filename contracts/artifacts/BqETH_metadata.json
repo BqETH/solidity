@@ -1,0 +1,1189 @@
+{
+	"compiler": {
+		"version": "0.8.17+commit.8df45f5f"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"stateMutability": "payable",
+				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "id",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "label",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "policyEncryptingKey",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "encryptedTreasureMap",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "aliceVerifyingKey",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "size",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "startTimestamp",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "endTimestamp",
+						"type": "string"
+					}
+				],
+				"name": "NewPolicyRegistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "sender",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "pid",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "bool",
+						"name": "ready",
+						"type": "bool"
+					}
+				],
+				"name": "NewPuzzleRegistered",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "pid",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes",
+						"name": "solution",
+						"type": "bytes"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "verifyingKey",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "messageKit",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "sdate",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "treasureMap",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "policyEncryptingKey",
+						"type": "string"
+					}
+				],
+				"name": "PuzzleInactive",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "pid",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes",
+						"name": "y",
+						"type": "bytes"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "sdate",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "reward",
+						"type": "uint256"
+					}
+				],
+				"name": "RewardClaimed",
+				"type": "event"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "fallback"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "activePolicies",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "pid",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "messageKit",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "encryptedTreasureMap",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "revocationKit",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "aliceVerifyingKey",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "policyEncryptingKey",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "activePuzzles",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "a",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "b",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "mod",
+						"type": "bytes"
+					}
+				],
+				"name": "big_mulmod",
+				"outputs": [
+					{
+						"internalType": "bytes",
+						"name": "c",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "base",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "e",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "m",
+						"type": "bytes"
+					}
+				],
+				"name": "bignum_expmod",
+				"outputs": [
+					{
+						"internalType": "bytes",
+						"name": "o",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "claimBlockNumber",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address payable",
+						"name": "_farmer",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_pid",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_h1",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "_x2",
+						"type": "bytes32"
+					}
+				],
+				"name": "claimPuzzle",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address payable",
+						"name": "_farmer",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_pid",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_y",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes[]",
+						"name": "_proof",
+						"type": "bytes[]"
+					}
+				],
+				"name": "claimReward",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "escrow_balances",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "getActiveChain",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "address",
+								"name": "creator",
+								"type": "address"
+							},
+							{
+								"internalType": "address payable",
+								"name": "farmer",
+								"type": "address"
+							},
+							{
+								"internalType": "bytes",
+								"name": "N",
+								"type": "bytes"
+							},
+							{
+								"internalType": "bytes",
+								"name": "x",
+								"type": "bytes"
+							},
+							{
+								"internalType": "uint256",
+								"name": "t",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "sdate",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "h3",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "reward",
+								"type": "uint256"
+							},
+							{
+								"internalType": "string",
+								"name": "phi",
+								"type": "string"
+							},
+							{
+								"internalType": "uint256",
+								"name": "head",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct BqETH.Puzzle[]",
+						"name": "chain",
+						"type": "tuple[]"
+					},
+					{
+						"internalType": "string",
+						"name": "verifyingKey",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "messageKit",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "treasureMap",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_user",
+						"type": "address"
+					}
+				],
+				"name": "getActivePuzzle",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "pid",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes",
+						"name": "N",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "x",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "t",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "h3",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reward",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "verifyingKey",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "messageKit",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "treasureMap",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "encryptedPhi",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "sdate",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_pid",
+						"type": "uint256"
+					}
+				],
+				"name": "getPuzzle",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "pid",
+						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes",
+						"name": "N",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "x",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "t",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "h3",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reward",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "verifyingKey",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "messageKit",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "treasureMap",
+						"type": "string"
+					},
+					{
+						"internalType": "string",
+						"name": "phi",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "sdate",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "x",
+						"type": "uint256"
+					}
+				],
+				"name": "log2",
+				"outputs": [
+					{
+						"internalType": "uint8",
+						"name": "",
+						"type": "uint8"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "name",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "_N",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_x",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_t",
+						"type": "uint256"
+					}
+				],
+				"name": "puzzleKey",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "_x",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_y",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_u",
+						"type": "bytes"
+					}
+				],
+				"name": "r_value",
+				"outputs": [
+					{
+						"internalType": "bytes16",
+						"name": "result",
+						"type": "bytes16"
+					}
+				],
+				"stateMutability": "pure",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "_N",
+						"type": "bytes"
+					},
+					{
+						"components": [
+							{
+								"internalType": "bytes",
+								"name": "x",
+								"type": "bytes"
+							},
+							{
+								"internalType": "uint256",
+								"name": "t",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "pid",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "h3",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "reward",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct BqETH.ChainData[]",
+						"name": "_c",
+						"type": "tuple[]"
+					},
+					{
+						"internalType": "string",
+						"name": "_phi",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_sdate",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "id",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "label",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "policyEncryptingKey",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "encryptedTreasureMap",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "revocationKit",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "aliceVerifyingKey",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "size",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "startTimestamp",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "endTimestamp",
+								"type": "string"
+							}
+						],
+						"internalType": "struct BqETH.PolicyData",
+						"name": "_policy",
+						"type": "tuple"
+					}
+				],
+				"name": "registerFlippedPuzzle",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "_N",
+						"type": "bytes"
+					},
+					{
+						"components": [
+							{
+								"internalType": "bytes",
+								"name": "x",
+								"type": "bytes"
+							},
+							{
+								"internalType": "uint256",
+								"name": "t",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "pid",
+								"type": "uint256"
+							},
+							{
+								"internalType": "bytes32",
+								"name": "h3",
+								"type": "bytes32"
+							},
+							{
+								"internalType": "uint256",
+								"name": "reward",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct BqETH.ChainData[]",
+						"name": "_c",
+						"type": "tuple[]"
+					},
+					{
+						"internalType": "string",
+						"name": "_phi",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "_sdate",
+						"type": "uint256"
+					},
+					{
+						"components": [
+							{
+								"internalType": "string",
+								"name": "id",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "label",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "policyEncryptingKey",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "encryptedTreasureMap",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "revocationKit",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "aliceVerifyingKey",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "size",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "startTimestamp",
+								"type": "string"
+							},
+							{
+								"internalType": "string",
+								"name": "endTimestamp",
+								"type": "string"
+							}
+						],
+						"internalType": "struct BqETH.PolicyData",
+						"name": "_policy",
+						"type": "tuple"
+					},
+					{
+						"internalType": "string",
+						"name": "_messageKit",
+						"type": "string"
+					}
+				],
+				"name": "registerPuzzleChain",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"name": "userPuzzles",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "creator",
+						"type": "address"
+					},
+					{
+						"internalType": "address payable",
+						"name": "farmer",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes",
+						"name": "N",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "x",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "t",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "sdate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes32",
+						"name": "h3",
+						"type": "bytes32"
+					},
+					{
+						"internalType": "uint256",
+						"name": "reward",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "phi",
+						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "head",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes",
+						"name": "N",
+						"type": "bytes"
+					},
+					{
+						"internalType": "bytes",
+						"name": "xi",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint256",
+						"name": "d",
+						"type": "uint256"
+					},
+					{
+						"internalType": "bytes",
+						"name": "yi",
+						"type": "bytes"
+					},
+					{
+						"internalType": "uint8",
+						"name": "index",
+						"type": "uint8"
+					},
+					{
+						"internalType": "bytes[]",
+						"name": "p",
+						"type": "bytes[]"
+					}
+				],
+				"name": "verifyProof",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "version",
+				"outputs": [
+					{
+						"internalType": "string",
+						"name": "",
+						"type": "string"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {
+				"getPuzzle(uint256)": {
+					"params": {
+						"_pid": "uint256 The puzzle hash"
+					}
+				},
+				"registerFlippedPuzzle(bytes,(bytes,uint256,uint256,bytes32,uint256)[],string,uint256,(string,string,string,string,string,string,string,string,string))": {
+					"details": "This registration creates an entry per puzzle in the userPuzzles map. The parameters completely and uniquely define the puzzle and may be repeated across multiple puzzles since (N,φ) will be re-used until N has decayed. ",
+					"params": {
+						"_N": "uint256  The prime composite modulus",
+						"_c": "[] ChainData  The puzzle initial challenges",
+						"_phi": "string  This is the value of phi, encrypted for the caller's public key",
+						"_policy": "PolicyData  The details of the NuCypher policy covering this",
+						"_sdate": "uint256  The start date (UTC) or the next puzzle hash in the chain"
+					},
+					"returns": {
+						"_0": "ph uint256 Returns the puzzle hash key"
+					}
+				},
+				"registerPuzzleChain(bytes,(bytes,uint256,uint256,bytes32,uint256)[],string,uint256,(string,string,string,string,string,string,string,string,string),string)": {
+					"details": "This registration creates an entry per puzzle in the userPuzzles map. The parameters completely and uniquely define the puzzle and may be repeated across multiple puzzles since (N,φ) will be re-used until N has decayed. ",
+					"params": {
+						"_N": "uint256  The prime composite modulus",
+						"_c": "[] ChainData  The puzzle initial challenges",
+						"_messageKit": "string The encrypted payload",
+						"_phi": "string  This is the value of phi, encrypted for the caller's public key",
+						"_policy": "PolicyData  The details of the NuCypher policy covering this",
+						"_sdate": "uint256  The start date (UTC) or the next puzzle hash in the chain"
+					},
+					"returns": {
+						"_0": "ph uint256 Returns the puzzle hash key of the first puzzle"
+					}
+				}
+			},
+			"title": "BqETH Contract",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"getPuzzle(uint256)": {
+					"notice": "Performs a formal request for all of a puzzle's data"
+				},
+				"registerFlippedPuzzle(bytes,(bytes,uint256,uint256,bytes32,uint256)[],string,uint256,(string,string,string,string,string,string,string,string,string))": {
+					"notice": "Registers a flipped user Puzzle"
+				},
+				"registerPuzzleChain(bytes,(bytes,uint256,uint256,bytes32,uint256)[],string,uint256,(string,string,string,string,string,string,string,string,string),string)": {
+					"notice": "Registers a user Puzzle Chain"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/BqETH.sol": "BqETH"
+		},
+		"evmVersion": "london",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contracts/BqETH.sol": {
+			"keccak256": "0x1356b9a9b6d655303360f2e78044808c95551b6429eda6555fd3fe84a4f0b511",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://018e9840ccfb08474950c2153971dacb43290141234119c5de64f64c77f55c09",
+				"dweb:/ipfs/QmRKYVzuNbYCr3uphuToMYmCAspDAgk4zUVZ3ieDrzLo6C"
+			]
+		},
+		"contracts/ModMath.sol": {
+			"keccak256": "0x05317f4fe04eddd7c476e65432e6c40a5e2e9c5a62a56291f31dc1cede951470",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://cab1b055e7daaf6313a9e4e7f7dc40f01ae7c144d194351b0188c74ef7266e4f",
+				"dweb:/ipfs/QmY5AqTvTCsF6mu2rgWDY5JPNKedsSDpATkyCWvYoJvrMk"
+			]
+		},
+		"contracts/PietrzakVerifier.sol": {
+			"keccak256": "0xd3e6e40227d702e3fab159d7ab547898d3d05a3e4463398554c93746a40cd211",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://bd2f0ca8f45d84dc806ae2e0638671108c3889096f2bd3ed0b45a80ff1fb0261",
+				"dweb:/ipfs/QmdHC8WSe69JYeKCp7A4ZqgNfTsUh7gJQW9A24nXc7Biq7"
+			]
+		},
+		"hardhat/console.sol": {
+			"keccak256": "0x60b0215121bf25612a6739fb2f1ec35f31ee82e4a8216c032c8243d904ab3aa9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6e29880d33dd479bb046ba306993d26ccb779a4b1d94a046cb3567f22948bb4d",
+				"dweb:/ipfs/QmfTY1qzPt5C63Wc7y6JqfZr5899NRvXYdCpyLzR5FXQic"
+			]
+		}
+	},
+	"version": 1
+}
