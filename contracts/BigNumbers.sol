@@ -56,7 +56,7 @@ library BigNumbers {
     ) internal view returns(BigNumber memory){
         return _init(val, neg, bitlen);
     }
-    
+
     /** @notice initialize a BN instance
      *  @dev wrapper function for _init. initializes from bytes value.
      *
@@ -85,9 +85,33 @@ library BigNumbers {
     ) internal view returns(BigNumber memory){
         return _init(abi.encodePacked(val), neg, 0);
     }
+
+    // This trim function removes leading zeros don't contain information in our big endian format.
+    function trim(bytes memory data) internal pure returns(bytes memory) {
+        uint256 msb = 0;
+        while (data[msb] == 0) {
+            msb ++;
+            if (msb == data.length) {
+                return hex"";
+            }
+        }
+        
+        if (msb > 0) {
+            // We don't want to copy data around, so we do the following assembly manipulation:
+            // Move the data pointer forward by msb, then store in the length slot (current length - msb)
+            assembly {
+                let current_len := mload(data)
+                data := add(data, msb)
+                mstore(data, sub(current_len, msb))
+            }
+        }
+        return data;
+    }
+
+    function toBytes(BigNumber memory n) public pure returns(bytes memory r){ 
+        return n.val;
+    }
     // ***************** END EXPOSED MANAGEMENT FUNCTIONS ******************
-
-
 
 
     // ***************** BEGIN EXPOSED CORE CALCULATION FUNCTIONS ******************

@@ -28,7 +28,7 @@ abstract contract PietrzakVerifier {
       // return int.from_bytes(b[:16], "big")
 
       // We chop off the hash at 16 bytes because that's all we need for r
-      bytes memory p = abi.encode(_x.val,_y.val, _u.val);
+      bytes memory p = abi.encodePacked(_x.val,_y.val, _u.val);
       bytes32 s = sha256(p);
       bytes16[2] memory b = [bytes16(0),0];
       assembly {
@@ -54,7 +54,7 @@ abstract contract PietrzakVerifier {
       // assert (math.gcd(puzzle[PUZZLE_X] + 1, puzzle[PUZZLE_MODULUS]) == 1)
 
     // Make Bignumbers out of everything
-    BigNumber memory bnN = BigNumbers.init(N, false);
+    BigNumber memory bnN =  BigNumbers.init(N, false);
     BigNumber memory bnxi = BigNumbers.init(xi, false);
     BigNumber memory bnyi = BigNumbers.init(yi, false);
     BigNumber[] memory proof;
