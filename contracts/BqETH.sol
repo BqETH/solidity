@@ -425,9 +425,9 @@ struct PolicyData {
       // Must be the same farmer that committed the solution first
       require(puzzle.farmer == _farmer, "Original farmer required");
       // The solution submitted must match the commitment
-      bytes32 h1 = sha256(abi.encode(_y));
-      bytes32 x2 = sha256(abi.encode(salt,_y));
-      require(sha256(abi.encode(x2,h1)) == puzzle.h3, "Solution must match commitment.");
+      bytes32 h1 = sha256(abi.encodePacked(_y));
+      bytes32 x2 = sha256(abi.encodePacked(salt,_y));
+      require(sha256(abi.encodePacked(x2,h1)) == puzzle.h3, "Solution must match commitment.");
 
       // Now we can bother to verify
       uint256 d = log2(puzzle.t)-1;

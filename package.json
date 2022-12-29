@@ -42,13 +42,21 @@
   "scripts": {
     "lint": "",
     "lint:fix": "",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "cat ./artifacts/contracts/BqETH.sol/BqETH.json | grep -v 'deployedBytecode' | grep -v 'bytecode' > ../bqeth-dapp/src/artifacts/BqETH.json"
+    "publish": "cat ./artifacts/contracts/BqETH.sol/BqETH.json | grep -v 'deployedBytecode' | grep -v 'bytecode' > ../bqeth-dapp/src/artifacts/BqETH.json",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "start:local": "./node_modules/.bin/hardhat --config hardhat.config.local.js node",
+    "deploy:local": "./node_modules/.bin/hardhat --config hardhat.config.ts --network localhost bqeth-deploy",
+    "test:local": "./node_modules/.bin/hardhat --config hardhat.config.local.js test",
+    "compile:local": "./node_modules/.bin/hardhat --config hardhat.config.local.js compile"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.3",
-    "hardhat-tracer": "^1.1.0-rc.6",
-    "harhat": "^1.0.1",
+    "@tovarishfin/hardhat-yul": "^3.0.5",
+    "hardhat-tracer": "^1.2.1",
+    "node": "^19.3.0",
+    "nodejs": "^0.0.0",
+    "nvm": "^0.0.4",
     "web3": "^1.8.0"
   }
 }

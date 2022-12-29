@@ -6,8 +6,9 @@ import '@nomiclabs/hardhat-waffle';
 import '@typechain/hardhat';
 import 'hardhat-gas-reporter';
 import 'solidity-coverage';
-
+import "@tovarishfin/hardhat-yul";
 import './tasks/deploy';
+import { bufferToHex, privateToAddress, toBuffer, toChecksumAddress } from "@nomicfoundation/ethereumjs-util";
 
 dotenv.config();
 
@@ -18,7 +19,33 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
   for (const account of accounts) {
     const bal = await account.getBalance();
     console.log(account.address + ':' + bal);
+    console.log();
   }
+});
+
+
+task("bqeth-deploy", "Deploys BqETH , get wallets, and outputs files", async (taskArgs, hre) => {
+  // We get the contract to deploy
+  const BqETH = await hre.ethers.getContractFactory("BqETH");
+  const bqeth = await BqETH.deploy();
+
+  // Await deployment
+  await bqeth.deployed();
+
+  // Get address
+  const contractAddress = bqeth.address;
+
+  // Write file
+  //fs.writeFileSync('./.contract', contractAddress);
+
+  // Get generated signer wallets
+  const accounts = await hre.ethers.getSigners();
+
+  // Get the first wallet address
+  const walletAddress = accounts[0].address;
+
+  // Write file
+  //fs.writeFileSync('./.wallet', walletAddress);
 });
 
 // You need to export an object to set up your config
@@ -27,15 +54,11 @@ task('accounts', 'Prints the list of accounts', async (taskArgs, hre) => {
 const config: HardhatUserConfig = {
   solidity: '0.8.8',
   paths: {
-    artifacts: './frontend/src/artifacts'
+    artifacts: './artifacts'
   },
   networks: {
     hardhat: {
-      mining: {
-        auto: false,
-        interval: 1000
-      },
-      chainId: 31337,
+      chainId: 1337,
       allowUnlimitedContractSize: true
     },
     ropsten: {
@@ -62,10 +85,6 @@ module.exports = {
   solidity: '0.8.4',
   networks: {
     hardhat: {
-      mining: {
-        auto: false,
-        interval: 1000
-      },
       chainId: 1337,
       allowUnlimitedContractSize: true
     },
