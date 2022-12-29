@@ -57,7 +57,7 @@ abstract contract PietrzakVerifier {
     BigNumber memory bnN =  BigNumbers.init(N, false);
     BigNumber memory bnxi = BigNumbers.init(xi, false);
     BigNumber memory bnyi = BigNumbers.init(yi, false);
-    BigNumber[] memory proof;
+    BigNumber[] memory proof = new BigNumber[](p.length);
     for(uint i = 0; i < p.length; i++){
       proof[i] = BigNumbers.init(p[i], false);
     }
