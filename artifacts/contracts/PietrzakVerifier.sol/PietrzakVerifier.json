@@ -7,35 +7,6 @@
       "inputs": [
         {
           "internalType": "uint256",
-          "name": "base",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "e",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "m",
-          "type": "uint256"
-        }
-      ],
-      "name": "expmod",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "o",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
           "name": "x",
           "type": "uint256"
         }
@@ -54,19 +25,70 @@
     {
       "inputs": [
         {
-          "internalType": "uint256",
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "val",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bool",
+              "name": "neg",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "bitlen",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct BigNumber",
           "name": "_x",
-          "type": "uint256"
+          "type": "tuple"
         },
         {
-          "internalType": "uint256",
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "val",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bool",
+              "name": "neg",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "bitlen",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct BigNumber",
           "name": "_y",
-          "type": "uint256"
+          "type": "tuple"
         },
         {
-          "internalType": "uint256",
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "val",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bool",
+              "name": "neg",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "bitlen",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct BigNumber",
           "name": "_u",
-          "type": "uint256"
+          "type": "tuple"
         }
       ],
       "name": "r_value",

@@ -20,22 +20,20 @@ import type { TypedEventFilter, TypedEvent, TypedListener } from "./common";
 
 interface PietrzakVerifierInterface extends ethers.utils.Interface {
   functions: {
-    "expmod(uint256,uint256,uint256)": FunctionFragment;
     "log2(uint256)": FunctionFragment;
-    "r_value(uint256,uint256,uint256)": FunctionFragment;
+    "r_value((bytes,bool,uint256),(bytes,bool,uint256),(bytes,bool,uint256))": FunctionFragment;
   };
 
-  encodeFunctionData(
-    functionFragment: "expmod",
-    values: [BigNumberish, BigNumberish, BigNumberish]
-  ): string;
   encodeFunctionData(functionFragment: "log2", values: [BigNumberish]): string;
   encodeFunctionData(
     functionFragment: "r_value",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [
+      { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      { val: BytesLike; neg: boolean; bitlen: BigNumberish }
+    ]
   ): string;
 
-  decodeFunctionResult(functionFragment: "expmod", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "log2", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "r_value", data: BytesLike): Result;
 
@@ -86,53 +84,32 @@ export class PietrzakVerifier extends BaseContract {
   interface: PietrzakVerifierInterface;
 
   functions: {
-    expmod(
-      base: BigNumberish,
-      e: BigNumberish,
-      m: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { o: BigNumber }>;
-
     log2(x: BigNumberish, overrides?: CallOverrides): Promise<[number]>;
 
     r_value(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _u: BigNumberish,
+      _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
   };
 
-  expmod(
-    base: BigNumberish,
-    e: BigNumberish,
-    m: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
-
   log2(x: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
   r_value(
-    _x: BigNumberish,
-    _y: BigNumberish,
-    _u: BigNumberish,
+    _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+    _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+    _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   callStatic: {
-    expmod(
-      base: BigNumberish,
-      e: BigNumberish,
-      m: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     log2(x: BigNumberish, overrides?: CallOverrides): Promise<number>;
 
     r_value(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _u: BigNumberish,
+      _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
@@ -140,40 +117,26 @@ export class PietrzakVerifier extends BaseContract {
   filters: {};
 
   estimateGas: {
-    expmod(
-      base: BigNumberish,
-      e: BigNumberish,
-      m: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
     log2(x: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     r_value(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _u: BigNumberish,
+      _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
-    expmod(
-      base: BigNumberish,
-      e: BigNumberish,
-      m: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     log2(
       x: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     r_value(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _u: BigNumberish,
+      _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
   };

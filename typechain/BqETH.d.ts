@@ -26,18 +26,17 @@ interface BqETHInterface extends ethers.utils.Interface {
     "activePuzzles(address)": FunctionFragment;
     "claimBlockNumber()": FunctionFragment;
     "claimPuzzle(address,uint256,bytes32,bytes32)": FunctionFragment;
-    "claimReward(address,uint256,uint256,uint256[])": FunctionFragment;
+    "claimReward(address,uint256,bytes,bytes[])": FunctionFragment;
     "escrow_balances(address)": FunctionFragment;
-    "expmod(uint256,uint256,uint256)": FunctionFragment;
     "getActiveChain(address)": FunctionFragment;
     "getActivePuzzle(address)": FunctionFragment;
     "getPuzzle(uint256)": FunctionFragment;
     "log2(uint256)": FunctionFragment;
     "name()": FunctionFragment;
-    "puzzleKey(uint256,uint256,uint256)": FunctionFragment;
-    "r_value(uint256,uint256,uint256)": FunctionFragment;
-    "registerFlippedPuzzle(uint256,tuple[],string,uint256,(string,string,string,string,string,string,string,string,string))": FunctionFragment;
-    "registerPuzzleChain(uint256,tuple[],string,uint256,(string,string,string,string,string,string,string,string,string),string)": FunctionFragment;
+    "puzzleKey(bytes,bytes,uint256)": FunctionFragment;
+    "r_value((bytes,bool,uint256),(bytes,bool,uint256),(bytes,bool,uint256))": FunctionFragment;
+    "registerFlippedPuzzle(bytes,tuple[],string,uint256,(string,string,string,string,string,string,string,string,string))": FunctionFragment;
+    "registerPuzzleChain(bytes,tuple[],string,uint256,(string,string,string,string,string,string,string,string,string),string)": FunctionFragment;
     "userPuzzles(uint256)": FunctionFragment;
     "version()": FunctionFragment;
   };
@@ -60,15 +59,11 @@ interface BqETHInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "claimReward",
-    values: [string, BigNumberish, BigNumberish, BigNumberish[]]
+    values: [string, BigNumberish, BytesLike, BytesLike[]]
   ): string;
   encodeFunctionData(
     functionFragment: "escrow_balances",
     values: [string]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "expmod",
-    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "getActiveChain",
@@ -86,18 +81,22 @@ interface BqETHInterface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "name", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "puzzleKey",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [BytesLike, BytesLike, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "r_value",
-    values: [BigNumberish, BigNumberish, BigNumberish]
+    values: [
+      { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      { val: BytesLike; neg: boolean; bitlen: BigNumberish }
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "registerFlippedPuzzle",
     values: [
-      BigNumberish,
+      BytesLike,
       {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
@@ -121,9 +120,9 @@ interface BqETHInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "registerPuzzleChain",
     values: [
-      BigNumberish,
+      BytesLike,
       {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
@@ -175,7 +174,6 @@ interface BqETHInterface extends ethers.utils.Interface {
     functionFragment: "escrow_balances",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "expmod", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getActiveChain",
     data: BytesLike
@@ -206,8 +204,8 @@ interface BqETHInterface extends ethers.utils.Interface {
   events: {
     "NewPolicyRegistered(string,string,string,string,string,string,string,string)": EventFragment;
     "NewPuzzleRegistered(address,uint256,bool)": EventFragment;
-    "PuzzleInactive(uint256,uint256,string,string,uint256,string,string)": EventFragment;
-    "RewardClaimed(uint256,uint256,uint256,uint256)": EventFragment;
+    "PuzzleInactive(uint256,bytes,string,string,uint256,string,string)": EventFragment;
+    "RewardClaimed(uint256,bytes,uint256,uint256)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "NewPolicyRegistered"): EventFragment;
@@ -238,9 +236,9 @@ export type NewPuzzleRegisteredEvent = TypedEvent<
 >;
 
 export type PuzzleInactiveEvent = TypedEvent<
-  [BigNumber, BigNumber, string, string, BigNumber, string, string] & {
+  [BigNumber, string, string, string, BigNumber, string, string] & {
     pid: BigNumber;
-    solution: BigNumber;
+    solution: string;
     verifyingKey: string;
     messageKit: string;
     sdate: BigNumber;
@@ -250,9 +248,9 @@ export type PuzzleInactiveEvent = TypedEvent<
 >;
 
 export type RewardClaimedEvent = TypedEvent<
-  [BigNumber, BigNumber, BigNumber, BigNumber] & {
+  [BigNumber, string, BigNumber, BigNumber] & {
     pid: BigNumber;
-    y: BigNumber;
+    y: string;
     sdate: BigNumber;
     reward: BigNumber;
   }
@@ -335,8 +333,8 @@ export class BqETH extends BaseContract {
     claimReward(
       _farmer: string,
       _pid: BigNumberish,
-      _y: BigNumberish,
-      _proof: BigNumberish[],
+      _y: BytesLike,
+      _proof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -344,13 +342,6 @@ export class BqETH extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
-
-    expmod(
-      base: BigNumberish,
-      e: BigNumberish,
-      m: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[BigNumber] & { o: BigNumber }>;
 
     getActiveChain(
       _user: string,
@@ -360,8 +351,8 @@ export class BqETH extends BaseContract {
         ([
           string,
           string,
-          BigNumber,
-          BigNumber,
+          string,
+          string,
           BigNumber,
           BigNumber,
           string,
@@ -371,8 +362,8 @@ export class BqETH extends BaseContract {
         ] & {
           creator: string;
           farmer: string;
-          N: BigNumber;
-          x: BigNumber;
+          N: string;
+          x: string;
           t: BigNumber;
           sdate: BigNumber;
           h3: string;
@@ -387,8 +378,8 @@ export class BqETH extends BaseContract {
         chain: ([
           string,
           string,
-          BigNumber,
-          BigNumber,
+          string,
+          string,
           BigNumber,
           BigNumber,
           string,
@@ -398,8 +389,8 @@ export class BqETH extends BaseContract {
         ] & {
           creator: string;
           farmer: string;
-          N: BigNumber;
-          x: BigNumber;
+          N: string;
+          x: string;
           t: BigNumber;
           sdate: BigNumber;
           h3: string;
@@ -420,8 +411,8 @@ export class BqETH extends BaseContract {
       [
         BigNumber,
         string,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         BigNumber,
         string,
         BigNumber,
@@ -433,8 +424,8 @@ export class BqETH extends BaseContract {
       ] & {
         pid: BigNumber;
         creator: string;
-        N: BigNumber;
-        x: BigNumber;
+        N: string;
+        x: string;
         t: BigNumber;
         h3: string;
         reward: BigNumber;
@@ -453,8 +444,8 @@ export class BqETH extends BaseContract {
       [
         BigNumber,
         string,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         BigNumber,
         string,
         BigNumber,
@@ -466,8 +457,8 @@ export class BqETH extends BaseContract {
       ] & {
         pid: BigNumber;
         creator: string;
-        N: BigNumber;
-        x: BigNumber;
+        N: string;
+        x: string;
         t: BigNumber;
         h3: string;
         reward: BigNumber;
@@ -484,23 +475,23 @@ export class BqETH extends BaseContract {
     name(overrides?: CallOverrides): Promise<[string]>;
 
     puzzleKey(
-      _N: BigNumberish,
-      _x: BigNumberish,
+      _N: BytesLike,
+      _x: BytesLike,
       _t: BigNumberish,
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     r_value(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _u: BigNumberish,
+      _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
     registerFlippedPuzzle(
-      _N: BigNumberish,
+      _N: BytesLike,
       _c: {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
@@ -523,9 +514,9 @@ export class BqETH extends BaseContract {
     ): Promise<ContractTransaction>;
 
     registerPuzzleChain(
-      _N: BigNumberish,
+      _N: BytesLike,
       _c: {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
@@ -555,8 +546,8 @@ export class BqETH extends BaseContract {
       [
         string,
         string,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         BigNumber,
         BigNumber,
         string,
@@ -566,8 +557,8 @@ export class BqETH extends BaseContract {
       ] & {
         creator: string;
         farmer: string;
-        N: BigNumber;
-        x: BigNumber;
+        N: string;
+        x: string;
         t: BigNumber;
         sdate: BigNumber;
         h3: string;
@@ -610,19 +601,12 @@ export class BqETH extends BaseContract {
   claimReward(
     _farmer: string,
     _pid: BigNumberish,
-    _y: BigNumberish,
-    _proof: BigNumberish[],
+    _y: BytesLike,
+    _proof: BytesLike[],
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   escrow_balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
-  expmod(
-    base: BigNumberish,
-    e: BigNumberish,
-    m: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<BigNumber>;
 
   getActiveChain(
     _user: string,
@@ -632,8 +616,8 @@ export class BqETH extends BaseContract {
       ([
         string,
         string,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         BigNumber,
         BigNumber,
         string,
@@ -643,8 +627,8 @@ export class BqETH extends BaseContract {
       ] & {
         creator: string;
         farmer: string;
-        N: BigNumber;
-        x: BigNumber;
+        N: string;
+        x: string;
         t: BigNumber;
         sdate: BigNumber;
         h3: string;
@@ -659,8 +643,8 @@ export class BqETH extends BaseContract {
       chain: ([
         string,
         string,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         BigNumber,
         BigNumber,
         string,
@@ -670,8 +654,8 @@ export class BqETH extends BaseContract {
       ] & {
         creator: string;
         farmer: string;
-        N: BigNumber;
-        x: BigNumber;
+        N: string;
+        x: string;
         t: BigNumber;
         sdate: BigNumber;
         h3: string;
@@ -692,8 +676,8 @@ export class BqETH extends BaseContract {
     [
       BigNumber,
       string,
-      BigNumber,
-      BigNumber,
+      string,
+      string,
       BigNumber,
       string,
       BigNumber,
@@ -705,8 +689,8 @@ export class BqETH extends BaseContract {
     ] & {
       pid: BigNumber;
       creator: string;
-      N: BigNumber;
-      x: BigNumber;
+      N: string;
+      x: string;
       t: BigNumber;
       h3: string;
       reward: BigNumber;
@@ -725,8 +709,8 @@ export class BqETH extends BaseContract {
     [
       BigNumber,
       string,
-      BigNumber,
-      BigNumber,
+      string,
+      string,
       BigNumber,
       string,
       BigNumber,
@@ -738,8 +722,8 @@ export class BqETH extends BaseContract {
     ] & {
       pid: BigNumber;
       creator: string;
-      N: BigNumber;
-      x: BigNumber;
+      N: string;
+      x: string;
       t: BigNumber;
       h3: string;
       reward: BigNumber;
@@ -756,23 +740,23 @@ export class BqETH extends BaseContract {
   name(overrides?: CallOverrides): Promise<string>;
 
   puzzleKey(
-    _N: BigNumberish,
-    _x: BigNumberish,
+    _N: BytesLike,
+    _x: BytesLike,
     _t: BigNumberish,
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   r_value(
-    _x: BigNumberish,
-    _y: BigNumberish,
-    _u: BigNumberish,
+    _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+    _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+    _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
     overrides?: CallOverrides
   ): Promise<BigNumber>;
 
   registerFlippedPuzzle(
-    _N: BigNumberish,
+    _N: BytesLike,
     _c: {
-      x: BigNumberish;
+      x: BytesLike;
       t: BigNumberish;
       pid: BigNumberish;
       h3: BytesLike;
@@ -795,9 +779,9 @@ export class BqETH extends BaseContract {
   ): Promise<ContractTransaction>;
 
   registerPuzzleChain(
-    _N: BigNumberish,
+    _N: BytesLike,
     _c: {
-      x: BigNumberish;
+      x: BytesLike;
       t: BigNumberish;
       pid: BigNumberish;
       h3: BytesLike;
@@ -827,8 +811,8 @@ export class BqETH extends BaseContract {
     [
       string,
       string,
-      BigNumber,
-      BigNumber,
+      string,
+      string,
       BigNumber,
       BigNumber,
       string,
@@ -838,8 +822,8 @@ export class BqETH extends BaseContract {
     ] & {
       creator: string;
       farmer: string;
-      N: BigNumber;
-      x: BigNumber;
+      N: string;
+      x: string;
       t: BigNumber;
       sdate: BigNumber;
       h3: string;
@@ -882,20 +866,13 @@ export class BqETH extends BaseContract {
     claimReward(
       _farmer: string,
       _pid: BigNumberish,
-      _y: BigNumberish,
-      _proof: BigNumberish[],
+      _y: BytesLike,
+      _proof: BytesLike[],
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     escrow_balances(
       arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    expmod(
-      base: BigNumberish,
-      e: BigNumberish,
-      m: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -907,8 +884,8 @@ export class BqETH extends BaseContract {
         ([
           string,
           string,
-          BigNumber,
-          BigNumber,
+          string,
+          string,
           BigNumber,
           BigNumber,
           string,
@@ -918,8 +895,8 @@ export class BqETH extends BaseContract {
         ] & {
           creator: string;
           farmer: string;
-          N: BigNumber;
-          x: BigNumber;
+          N: string;
+          x: string;
           t: BigNumber;
           sdate: BigNumber;
           h3: string;
@@ -934,8 +911,8 @@ export class BqETH extends BaseContract {
         chain: ([
           string,
           string,
-          BigNumber,
-          BigNumber,
+          string,
+          string,
           BigNumber,
           BigNumber,
           string,
@@ -945,8 +922,8 @@ export class BqETH extends BaseContract {
         ] & {
           creator: string;
           farmer: string;
-          N: BigNumber;
-          x: BigNumber;
+          N: string;
+          x: string;
           t: BigNumber;
           sdate: BigNumber;
           h3: string;
@@ -967,8 +944,8 @@ export class BqETH extends BaseContract {
       [
         BigNumber,
         string,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         BigNumber,
         string,
         BigNumber,
@@ -980,8 +957,8 @@ export class BqETH extends BaseContract {
       ] & {
         pid: BigNumber;
         creator: string;
-        N: BigNumber;
-        x: BigNumber;
+        N: string;
+        x: string;
         t: BigNumber;
         h3: string;
         reward: BigNumber;
@@ -1000,8 +977,8 @@ export class BqETH extends BaseContract {
       [
         BigNumber,
         string,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         BigNumber,
         string,
         BigNumber,
@@ -1013,8 +990,8 @@ export class BqETH extends BaseContract {
       ] & {
         pid: BigNumber;
         creator: string;
-        N: BigNumber;
-        x: BigNumber;
+        N: string;
+        x: string;
         t: BigNumber;
         h3: string;
         reward: BigNumber;
@@ -1031,23 +1008,23 @@ export class BqETH extends BaseContract {
     name(overrides?: CallOverrides): Promise<string>;
 
     puzzleKey(
-      _N: BigNumberish,
-      _x: BigNumberish,
+      _N: BytesLike,
+      _x: BytesLike,
       _t: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     r_value(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _u: BigNumberish,
+      _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     registerFlippedPuzzle(
-      _N: BigNumberish,
+      _N: BytesLike,
       _c: {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
@@ -1070,9 +1047,9 @@ export class BqETH extends BaseContract {
     ): Promise<BigNumber>;
 
     registerPuzzleChain(
-      _N: BigNumberish,
+      _N: BytesLike,
       _c: {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
@@ -1102,8 +1079,8 @@ export class BqETH extends BaseContract {
       [
         string,
         string,
-        BigNumber,
-        BigNumber,
+        string,
+        string,
         BigNumber,
         BigNumber,
         string,
@@ -1113,8 +1090,8 @@ export class BqETH extends BaseContract {
       ] & {
         creator: string;
         farmer: string;
-        N: BigNumber;
-        x: BigNumber;
+        N: string;
+        x: string;
         t: BigNumber;
         sdate: BigNumber;
         h3: string;
@@ -1192,7 +1169,7 @@ export class BqETH extends BaseContract {
       { sender: string; pid: BigNumber; ready: boolean }
     >;
 
-    "PuzzleInactive(uint256,uint256,string,string,uint256,string,string)"(
+    "PuzzleInactive(uint256,bytes,string,string,uint256,string,string)"(
       pid?: null,
       solution?: null,
       verifyingKey?: null,
@@ -1201,10 +1178,10 @@ export class BqETH extends BaseContract {
       treasureMap?: null,
       policyEncryptingKey?: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, string, string, BigNumber, string, string],
+      [BigNumber, string, string, string, BigNumber, string, string],
       {
         pid: BigNumber;
-        solution: BigNumber;
+        solution: string;
         verifyingKey: string;
         messageKit: string;
         sdate: BigNumber;
@@ -1222,10 +1199,10 @@ export class BqETH extends BaseContract {
       treasureMap?: null,
       policyEncryptingKey?: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, string, string, BigNumber, string, string],
+      [BigNumber, string, string, string, BigNumber, string, string],
       {
         pid: BigNumber;
-        solution: BigNumber;
+        solution: string;
         verifyingKey: string;
         messageKit: string;
         sdate: BigNumber;
@@ -1234,14 +1211,14 @@ export class BqETH extends BaseContract {
       }
     >;
 
-    "RewardClaimed(uint256,uint256,uint256,uint256)"(
+    "RewardClaimed(uint256,bytes,uint256,uint256)"(
       pid?: null,
       y?: null,
       sdate?: null,
       reward?: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber],
-      { pid: BigNumber; y: BigNumber; sdate: BigNumber; reward: BigNumber }
+      [BigNumber, string, BigNumber, BigNumber],
+      { pid: BigNumber; y: string; sdate: BigNumber; reward: BigNumber }
     >;
 
     RewardClaimed(
@@ -1250,8 +1227,8 @@ export class BqETH extends BaseContract {
       sdate?: null,
       reward?: null
     ): TypedEventFilter<
-      [BigNumber, BigNumber, BigNumber, BigNumber],
-      { pid: BigNumber; y: BigNumber; sdate: BigNumber; reward: BigNumber }
+      [BigNumber, string, BigNumber, BigNumber],
+      { pid: BigNumber; y: string; sdate: BigNumber; reward: BigNumber }
     >;
   };
 
@@ -1273,20 +1250,13 @@ export class BqETH extends BaseContract {
     claimReward(
       _farmer: string,
       _pid: BigNumberish,
-      _y: BigNumberish,
-      _proof: BigNumberish[],
+      _y: BytesLike,
+      _proof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     escrow_balances(
       arg0: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    expmod(
-      base: BigNumberish,
-      e: BigNumberish,
-      m: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1310,23 +1280,23 @@ export class BqETH extends BaseContract {
     name(overrides?: CallOverrides): Promise<BigNumber>;
 
     puzzleKey(
-      _N: BigNumberish,
-      _x: BigNumberish,
+      _N: BytesLike,
+      _x: BytesLike,
       _t: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     r_value(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _u: BigNumberish,
+      _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     registerFlippedPuzzle(
-      _N: BigNumberish,
+      _N: BytesLike,
       _c: {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
@@ -1349,9 +1319,9 @@ export class BqETH extends BaseContract {
     ): Promise<BigNumber>;
 
     registerPuzzleChain(
-      _N: BigNumberish,
+      _N: BytesLike,
       _c: {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
@@ -1406,20 +1376,13 @@ export class BqETH extends BaseContract {
     claimReward(
       _farmer: string,
       _pid: BigNumberish,
-      _y: BigNumberish,
-      _proof: BigNumberish[],
+      _y: BytesLike,
+      _proof: BytesLike[],
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     escrow_balances(
       arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    expmod(
-      base: BigNumberish,
-      e: BigNumberish,
-      m: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1446,23 +1409,23 @@ export class BqETH extends BaseContract {
     name(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     puzzleKey(
-      _N: BigNumberish,
-      _x: BigNumberish,
+      _N: BytesLike,
+      _x: BytesLike,
       _t: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     r_value(
-      _x: BigNumberish,
-      _y: BigNumberish,
-      _u: BigNumberish,
+      _x: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _y: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
+      _u: { val: BytesLike; neg: boolean; bitlen: BigNumberish },
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     registerFlippedPuzzle(
-      _N: BigNumberish,
+      _N: BytesLike,
       _c: {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
@@ -1485,9 +1448,9 @@ export class BqETH extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     registerPuzzleChain(
-      _N: BigNumberish,
+      _N: BytesLike,
       _c: {
-        x: BigNumberish;
+        x: BytesLike;
         t: BigNumberish;
         pid: BigNumberish;
         h3: BytesLike;
