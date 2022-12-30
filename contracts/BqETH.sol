@@ -38,13 +38,12 @@ contract BqETH is PietrzakVerifier {
 
   struct Puzzle {
     address creator;    // The user who registered the puzzle
-    address payable farmer;     // Last farmer to claim
-    bytes x;            // The start value
     uint256 t;          // The time parameter
-    uint256 reward;     // The amount that should be dispensed
-    uint256 sdate;      // The start date or next pid in chain
+    uint128 reward;     // The amount that should be dispensed
+    uint128 sdate;      // The start date or next pid in chain
     bytes32 h3;         // H3 Hash value of the solution
     uint256 head;       // Chain head pid
+    bytes x;            // The start value
   }
 
   struct ActivePolicy {
@@ -67,6 +66,7 @@ contract BqETH is PietrzakVerifier {
   // We're storing the creator in the puzzle, indexing puzzles by their hash
   mapping(address => Moduli) public userModuli;
   mapping(uint256 => Puzzle) public userPuzzles;
+  mapping(uint256 => address) public claimData;
   mapping(address => uint) public escrow_balances;
   mapping(address => ActivePolicy) public activePolicies;
   mapping(address => uint256) public activePuzzles;   // Only the first puzzle of a chain
@@ -117,7 +117,7 @@ struct ChainData {
     uint256 t;          // The time parameter
     uint256 pid;        // The next pid
     bytes32 h3;         // H3 Hash value of the solution
-    uint256 reward;     // The amount that should be dispensed
+    uint128 reward;     // The amount that should be dispensed
 }
 
 struct PolicyData {
@@ -143,7 +143,7 @@ struct PolicyData {
     bytes memory _N, 
     ChainData[] memory _c, 
     string memory _phi, 
-    uint256 _sdate
+    uint128 _sdate
   ) internal returns (uint256)
   {
       uint256 reward_total = 0;
@@ -152,7 +152,6 @@ struct PolicyData {
       for(uint i = 0; i < _c.length; i++){
 
         uint256 ph = puzzleKey(_N, _c[i].x, _c[i].t);
-        address payable _farmer;
         // TODO Check that the puzzle did not already exist:
         // Puzzle memory puzzle = userPuzzles[ph];
         // require(puzzle.N != 0, "Puzzle already registered");   // We cannot afford a collision 
@@ -165,7 +164,6 @@ struct PolicyData {
 
         Puzzle memory pz;
         pz.creator = msg.sender;
-        pz.farmer = _farmer;
         
         pz.x = _c[i].x;
         pz.t = _c[i].t;
@@ -399,7 +397,7 @@ struct PolicyData {
     bytes memory b = abi.encode(_x2, _h1);
     require(sha256(b) == puzzle.h3, "Commitment must match puzzle stamp.");
     // Record the farmer who has committed to the solution hash
-    puzzle.farmer = _farmer;
+    claimData[_pid] = _farmer;
     return _pid;
   }
 
@@ -415,7 +413,7 @@ struct PolicyData {
     Puzzle storage puzzle = userPuzzles[_pid];
     if (!BigNumbers.isZero(puzzle.x)) {   // Valid and active puzzle
       // Must be the same farmer that committed the solution first
-      require(puzzle.farmer == _farmer, "Original farmer required");
+      require(claimData[_pid] == _farmer, "Original farmer required");
       // The solution submitted must match the commitment
       bytes32 h1 = sha256(abi.encodePacked(_y));
       bytes32 x2 = sha256(abi.encodePacked(salt,_y));
@@ -426,7 +424,8 @@ struct PolicyData {
       uint256 d = log2(puzzle.t)-1;
       if (verifyProof(mod.N, puzzle.x, d, _y, 0, _proof)) 
       {
-            puzzle.farmer.transfer(puzzle.reward);
+            // Pay the farmer his reward
+            _farmer.transfer(puzzle.reward);
             escrow_balances[puzzle.creator] -= puzzle.reward;
             puzzle.x = "";     // Set puzzle to inactive
             ActivePolicy memory policy = activePolicies[puzzle.creator];
