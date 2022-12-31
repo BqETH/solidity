@@ -38,9 +38,9 @@ contract BqETH is PietrzakVerifier {
 
   struct Puzzle {
     address creator;    // The user who registered the puzzle
-    uint256 t;          // The time parameter
+    uint128 t;          // The time parameter
     uint128 reward;     // The amount that should be dispensed
-    uint128 sdate;      // The start date or next pid in chain
+    uint256 sdate;      // The start date or next pid in chain
     bytes32 h3;         // H3 Hash value of the solution
     uint256 head;       // Chain head pid
     bytes x;            // The start value
@@ -114,7 +114,7 @@ contract BqETH is PietrzakVerifier {
 
 struct ChainData {
     bytes x;        // The start value
-    uint256 t;          // The time parameter
+    uint128 t;          // The time parameter
     uint256 pid;        // The next pid
     bytes32 h3;         // H3 Hash value of the solution
     uint128 reward;     // The amount that should be dispensed
@@ -143,7 +143,7 @@ struct PolicyData {
     bytes memory _N, 
     ChainData[] memory _c, 
     string memory _phi, 
-    uint128 _sdate
+    uint256 _sdate
   ) internal returns (uint256)
   {
       uint256 reward_total = 0;
