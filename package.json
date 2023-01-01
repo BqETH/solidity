@@ -42,7 +42,7 @@
   "scripts": {
     "lint": "",
     "lint:fix": "",
-    "publish": "cat ./artifacts/contracts/BqETH.sol/BqETH.json | grep -v 'deployedBytecode' | grep -v 'bytecode' > ../bqeth-dapp/src/artifacts/BqETH.json",
+    "deploy:client": "cat ./artifacts/contracts/BqETH.sol/BqETH.json | grep -v 'deployedBytecode' | grep -v 'bytecode' > ../bqeth-client/src/artifacts/BqETH.json",
     "compile": "hardhat compile",
     "test": "hardhat test",
     "start:local": "./node_modules/.bin/hardhat --config hardhat.config.local.js node",

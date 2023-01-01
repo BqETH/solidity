@@ -22,10 +22,12 @@ async function getBalanceInRange(address, startBlock, endBlock) {
         // Get the ETH value at that block
         let wei = await provider.getBalance(address, i);
         let ether = parseFloat(wei/ethers.constants.WeiPerEther);
+        let bl = await provider.getBlock(i);
         // Add result to final output 
         balances.push({
             block: i,
-            balance: ether
+            balance: ether,
+	    time: bl.timestamp
         });
     }
 
