@@ -81,8 +81,7 @@ abstract contract PietrzakVerifier {
 
       // When there are no more entries in the proof 
       
-      uint256 e = 2**(2**d);            // Note: This is a problem, if d is >=8
-      BigNumber memory bne = BigNumbers.init(e, false);
+      BigNumber memory bne = BigNumbers.shl(BigNumbers.one(), 2**d);
       if (BigNumbers.eq(yi, BigNumbers.modexp(xi, bne, N))) {
           // console.log("Proof is Valid");
           return true;
