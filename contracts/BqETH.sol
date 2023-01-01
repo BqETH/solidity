@@ -149,6 +149,12 @@ struct PolicyData {
       uint256 reward_total = 0;
       uint256 first_pid = 0;
       uint256 head = puzzleKey(_N, _c[0].x, _c[0].t);
+
+      Moduli memory mod;
+      mod.N = _N;
+      mod.phi = _phi;
+      userModuli[msg.sender] = mod;
+
       for(uint i = 0; i < _c.length; i++){
 
         uint256 ph = puzzleKey(_N, _c[i].x, _c[i].t);
@@ -157,11 +163,6 @@ struct PolicyData {
         // require(puzzle.N != 0, "Puzzle already registered");   // We cannot afford a collision 
 
         //Store the puzzle
-        Moduli memory mod;
-        mod.N = _N;
-        mod.phi = (i == 0 || i == _c.length-1)? _phi : '' ;  // Only first and last puzzle get encrypted phi
-        userModuli[msg.sender] = mod;
-
         Puzzle memory pz;
         pz.creator = msg.sender;
         
