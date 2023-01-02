@@ -33,7 +33,6 @@ contract BqETH is PietrzakVerifier {
 
   struct Moduli {
     bytes N;            // The modulus
-    string phi;         // The encrypted phi
   }
 
   struct Puzzle {
@@ -60,8 +59,8 @@ contract BqETH is PietrzakVerifier {
   // by generating a random x0, x1, then publishing x0 and x1'=enc(x1) with
   // x1' being x1 encrypted with y0.  It is actually easier and just as secure,
   // to generate a random x1' and deriving x1 from it as x1=y0^x1' mod N . 
-  // We can then simply publish a new Puzzle with the same data but x1' 
-  // instead of x1. The re-encryption policy can be linked to the last puzzle.
+  // We can then simply publish a new Puzzle with the same data but x1' instead of x1. 
+  // The re-encryption policy can be linked to the last puzzle.
 
   // We're storing the creator in the puzzle, indexing puzzles by their hash
   mapping(address => Moduli) public userModuli;
@@ -137,12 +136,10 @@ struct PolicyData {
   /// and may be repeated across multiple puzzles since (N,φ) will be re-used until N has decayed. 
   /// @param _N bytes  The prime composite modulus
   /// @param _c[] ChainData  The puzzle initial challenges
-  /// @param _phi string  This is the encrypted value of phi, encrypted for the caller's public key
   /// @param _sdate uint256  The start date (UTC) or the next puzzle hash in the chain
   function recordPuzzles(
     bytes memory _N, 
     ChainData[] memory _c, 
-    string memory _phi, 
     uint256 _sdate
   ) internal returns (uint256)
   {
@@ -152,7 +149,6 @@ struct PolicyData {
 
       Moduli memory mod;
       mod.N = _N;
-      mod.phi = _phi;
       userModuli[msg.sender] = mod;
 
       for(uint i = 0; i < _c.length; i++){
@@ -202,7 +198,6 @@ struct PolicyData {
   /// and may be repeated across multiple puzzles since (N,φ) will be re-used until N has decayed. 
   /// @param _N bytes  The prime composite modulus
   /// @param _c[] ChainData  The puzzle initial challenges
-  /// @param _phi string  This is the encrypted value of phi, encrypted for the caller's public key
   /// @param _sdate uint256  The start date (UTC) or the next puzzle hash in the chain
   /// @param _policy PolicyData  The details of the NuCypher policy covering this
   /// @param _messageKit string The encrypted payload
@@ -210,14 +205,13 @@ struct PolicyData {
   function registerPuzzleChain(
     bytes memory _N, 
     ChainData[] memory _c, 
-    string memory _phi,
     uint256 _sdate,
     PolicyData memory _policy,
     string memory _messageKit
     ) public payable 
   returns (uint256) 
   {
-      uint256 first_pid = recordPuzzles(_N, _c, _phi, _sdate);
+      uint256 first_pid = recordPuzzles(_N, _c, _sdate);
 
       activePolicies[msg.sender] = ActivePolicy( msg.sender, first_pid, _messageKit, 
           _policy.encryptedTreasureMap,
@@ -246,14 +240,12 @@ struct PolicyData {
   /// and may be repeated across multiple puzzles since (N,φ) will be re-used until N has decayed. 
   /// @param _N bytes  The prime composite modulus
   /// @param _c[] ChainData  The puzzle initial challenges
-  /// @param _phi string  This is the value of phi, encrypted for the caller's public key
   /// @param _sdate uint256  The start date (UTC) or the next puzzle hash in the chain
   /// @param _policy PolicyData  The details of the NuCypher policy covering this
   /// @return ph uint256 Returns the puzzle hash key
   function registerFlippedPuzzle(
     bytes memory _N, 
     ChainData[] memory _c, 
-    string memory _phi, 
     uint256 _sdate, 
     PolicyData memory _policy
     ) public payable 
@@ -264,7 +256,7 @@ struct PolicyData {
       // Puzzle flip restricted to creator of the previous puzzle
       require(msg.sender == userPuzzles[prev].creator);
 
-      uint256 first_pid = recordPuzzles(_N, _c, _phi, _sdate);
+      uint256 first_pid = recordPuzzles(_N, _c, _sdate);
 
       // Look up the active policy object and just change the treasuremap
       ActivePolicy storage policy = activePolicies[userPuzzles[prev].creator];
@@ -337,7 +329,6 @@ struct PolicyData {
               string memory verifyingKey, // The verifying key
               string memory messageKit,   // The secret
               string memory treasureMap,  // The associated NuCypher policy treasuremap
-              string memory encryptedPhi, // The encrypted value for Phi
               uint256 sdate
               )
   {
@@ -360,7 +351,6 @@ struct PolicyData {
         string memory verifyingKey, // The verifying key
         string memory messageKit,   // The secret
         string memory treasureMap,   // The associated NuCypher policy treasuremap
-        string memory phi,
         uint256 sdate
       )
   {
@@ -378,7 +368,6 @@ struct PolicyData {
               policy.aliceVerifyingKey,     // The verifying key
               policy.messageKit,            // The secret
               policy.encryptedTreasureMap,  // The associated NuCypher policy treasuremap
-              mod.phi,                      // The encrypted phi
               puzzle.sdate                  // The start date or next puzzle pid
       );
   }
