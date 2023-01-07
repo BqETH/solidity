@@ -20,22 +20,17 @@ abstract contract PietrzakVerifier {
     return n;
   }
 
- function r_value(BigNumber memory _x, BigNumber memory _y, BigNumber memory _u) public pure returns (uint128) {
+ function r_value(BigNumber memory _x, BigNumber memory _y, BigNumber memory _u) public pure returns (uint8) {
       // Farmers use sha256 (Sha-2) and so do we
       // And they use the proper big endian byte configuration of the integers
       // s = (x.to_bytes(int_size, "big", signed=False) + y.to_bytes(int_size, "big", signed=False) + μ.to_bytes(int_size, "big", signed=False))
       // b = hashlib.sha256(s).digest()
-      // return int.from_bytes(b[:16], "big")
+      // return int.from_bytes(b[:1], "big")
 
-      // We chop off the hash at 16 bytes because that's all we need for r
+      // We chop off the hash at 1 bytes because that's all we need for r
       bytes memory p = abi.encodePacked(_x.val,_y.val, _u.val);
       bytes32 s = sha256(p);
-      bytes16[2] memory b = [bytes16(0),0];
-      assembly {
-          mstore(b, s)
-          mstore(add(b, 16), s)
-      }
-      uint128 r = uint128(b[0]);
+      uint8 r = uint8(s[0]);
       return r;
   }
 
@@ -86,8 +81,7 @@ abstract contract PietrzakVerifier {
 
       // When there are no more entries in the proof 
       
-      uint256 e = 2**(2**d);            // Note: This is a problem, if d is >=8
-      BigNumber memory bne = BigNumbers.init(e, false);
+      BigNumber memory bne = BigNumbers.shl(BigNumbers.one(), 2**d);
       if (BigNumbers.eq(yi, BigNumbers.modexp(xi, bne, N))) {
           // console.log("Proof is Valid");
           return true;
